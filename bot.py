@@ -15,6 +15,7 @@ from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from utils import TestStates
 
 from json import dump, load
+import keyboards as kb
 
 
 # Создание бота по токену
@@ -30,6 +31,42 @@ async def process_start_command(message: types.Message):
     await message.reply('Привет! Напиши мне что-нибудь!')
 
 
+@dp.message_handler(commands=["hi1"])
+async def hi1(message: types.Message):
+    await message.reply('Нажми на кнопку!', reply_markup=kb.greet_kb)
+
+
+@dp.message_handler(commands=["hi2"])
+async def hi2(message: types.Message):
+    await message.reply('Нажми на кнопку!', reply_markup=kb.greet_kb2)
+
+
+@dp.message_handler(commands=["hi3"])
+async def hi3(message: types.Message):
+    await message.reply('Нажми на кнопку!', reply_markup=kb.greet_kb3)
+
+
+@dp.message_handler(commands=["hi4"])
+async def hi4(message: types.Message):
+    await message.reply('Нажми на кнопку!', reply_markup=kb.markup4)
+
+@dp.message_handler(commands=["hi5"])
+async def hi5(message: types.Message):
+    await message.reply('Нажми на кнопку!', reply_markup=kb.markup5)
+
+@dp.message_handler(commands=["hi6"])
+async def hi6(message: types.Message):
+    await message.reply('Нажми на кнопку!', reply_markup=kb.markup6)
+
+@dp.message_handler(commands=["in1"])
+async def in1(message: types.Message):
+    await message.reply('Моя первая инлайн кнопка!', reply_markup=kb.inline_kb1)
+
+@dp.callback_query_handler(lambda c: c.data == 'button_1')
+async def inline_b1(callback_query: types.CallbackQuery):
+    await bot.answer_callback_query(callback_query.id)
+    await bot.send_message(callback_query.from_user.id, 'Нажата любимая кнопка!!')
+
 @dp.message_handler(commands=["help"])
 async def process_help_command(message: types.Message):
     await message.reply('Слушаюсь и повинуюсь!')
@@ -37,7 +74,17 @@ async def process_help_command(message: types.Message):
 Доступные команды:
 /start,
 /help,
-/photo    
+/photo,
+/setstate,
+/exam,
+/hi1,
+/hi2,
+/hi3,
+/hi4,
+/hi5,
+/hi6,
+/in1
+
     """)
 
 
@@ -87,6 +134,7 @@ async def process_setstate(message: types.Message):
 
 
 def file_fill(user_id, data=None):
+    print(data)
     if not data:
         data = {
             "age": "",
@@ -104,10 +152,10 @@ async def start(message: types.Message):
     await message.reply('Напишите Ваше имя!', reply=False)
     file_fill(message.from_user.id)
 
-def change_user_file(user_id, field, content):
+def change_user_file(user_id, field, content: str):
     with open(f'user_data/{user_id}.json', 'r', encoding='utf-8') as file:
         data = load(file)
-    data[field] = content
+    data[field] = content.encode('utf-8').decode('utf-8')
     file_fill(user_id, data=data)
 
 
