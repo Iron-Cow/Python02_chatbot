@@ -8,6 +8,7 @@ from aiogram.utils.markdown import text, bold, italic, code, pre
 from aiogram.types import ParseMode
 
 from config import TOKEN
+import requests
 
 ####
 
@@ -16,6 +17,9 @@ from utils import TestStates
 
 from json import dump, load
 import keyboards as kb
+
+WEATHER_TOKEN = 'e7444caba5c079597539cba7f81adcd8'
+WEATHER_URL = 'http://api.openweathermap.org/data/2.5/weather?q={city_name}&appid={token}'
 
 
 # Создание бота по токену
@@ -62,10 +66,30 @@ async def hi6(message: types.Message):
 async def in1(message: types.Message):
     await message.reply('Моя первая инлайн кнопка!', reply_markup=kb.inline_kb1)
 
+@dp.message_handler(commands=["weather"])
+async def weather(message: types.Message):
+    await message.reply('Узнайте погоду в городах:', reply_markup=kb.inline_kb2)
+
+
 @dp.callback_query_handler(lambda c: c.data == 'button_1')
 async def inline_b1(callback_query: types.CallbackQuery):
     await bot.answer_callback_query(callback_query.id)
     await bot.send_message(callback_query.from_user.id, 'Нажата любимая кнопка!!')
+
+
+@dp.callback_query_handler(lambda c: c.data.startswith('weather'))
+async def inline_weather(callback_query: types.CallbackQuery):
+    await bot.answer_callback_query(callback_query.id)
+    city = callback_query.data.split('=')[-1]
+    api_link = WEATHER_URL.format(city_name=city, token=WEATHER_TOKEN)
+    data = requests.get(url=api_link)
+    print(data.json())
+    kelvin = 273.15
+    temperature = data.json()['main']['temp'] - kelvin
+    feels_like = data.json()['main']['feels_like'] - kelvin
+    await bot.send_message(callback_query.from_user.id,
+                           f'Погода в {city} -> ({int(temperature)}), но ощущается как ({int(feels_like)})!')
+
 
 @dp.message_handler(commands=["help"])
 async def process_help_command(message: types.Message):
@@ -83,8 +107,8 @@ async def process_help_command(message: types.Message):
 /hi4,
 /hi5,
 /hi6,
-/in1
-
+/in1,
+/weather
     """)
 
 

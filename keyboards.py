@@ -26,3 +26,8 @@ markup6 = ReplyKeyboardMarkup().row(button_1, button_2, button_3).add(button_hi)
 inline_kb1 = InlineKeyboardMarkup()
 inline_button_1 = InlineKeyboardButton("Моя кнопка", callback_data='button_1')
 inline_kb1.add(inline_button_1)
+
+inline_kb2 = InlineKeyboardMarkup()
+inline_button_kyiv = InlineKeyboardButton("Киев", callback_data='weather=Kyiv')
+inline_button_odesa = InlineKeyboardButton("Одесса", callback_data='weather=Odesa')
+inline_kb2.add(inline_button_kyiv).add(inline_button_odesa)
