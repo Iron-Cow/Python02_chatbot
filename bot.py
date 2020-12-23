@@ -159,7 +159,7 @@ async def any_format(message: types.Message):
                     code('команда'), "/help"
                                 )
     await bot.send_message(message.from_user.id, msgtext, parse_mode=ParseMode.MARKDOWN)
-
+#
 if __name__ == '__main__':
     print('bot is waiting :)')
     executor.start_polling(dp)
